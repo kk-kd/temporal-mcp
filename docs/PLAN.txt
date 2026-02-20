@@ -1,0 +1,66 @@
+Temporal MCP Server - Project Plan
+==================================
+
+Goals
+-----
+- Create an MCP server that enables LLM-assisted debugging of Temporal workflows
+- Support both local Temporal dev server (localhost:7233) and Temporal Cloud
+- Expose workflow inspection tools: list workflows, describe workflow, get workflow history
+- Follow MCP best practices with FastMCP decorator-based API
+
+Non-Goals
+---------
+- Workflow execution/control (signal, cancel, terminate) - can add later
+- Schedule management - can add later
+- Activity inspection beyond what's in workflow history - can add later
+- Worker management - can add later
+
+Architecture
+------------
+MCP Client (Cursor/Claude) --> [stdio] --> FastMCP Server --> Temporal Client --> [gRPC] --> Temporal
+
+Project Structure
+-----------------
+temporal-mcp/
+├── pyproject.toml
+├── Dockerfile
+├── docker-compose.yml
+├── README.md
+├── src/temporal_mcp/
+│   ├── __init__.py
+│   ├── server.py       # FastMCP server + tool definitions
+│   ├── client.py       # Temporal client wrapper
+│   ├── config.py       # Configuration (env-based)
+│   └── models.py       # Pydantic models for responses
+├── tests/
+└── docs/PLAN.txt
+
+MCP Tools
+---------
+1. list_workflows - List workflow executions with optional query filter
+2. describe_workflow - Get detailed info about a specific workflow
+3. get_workflow_history - Fetch event history for debugging
+
+Configuration (Environment Variables)
+-------------------------------------
+- TEMPORAL_ADDRESS - Server address (default: localhost:7233)
+- TEMPORAL_NAMESPACE - Namespace (default: default)
+- TEMPORAL_TLS_CERT - Path to TLS cert (for Cloud)
+- TEMPORAL_TLS_KEY - Path to TLS key (for Cloud)
+- TEMPORAL_API_KEY - API key (for Cloud, alternative to cert)
+
+Milestones
+----------
+[x] M1: Project Setup - pyproject.toml, directory structure, tooling config
+[x] M2: Temporal Client Wrapper - Config loading, client connection logic
+[x] M3: MCP Tools - Implement list_workflows, describe_workflow, get_workflow_history
+[x] M4: Testing - Unit tests with mocks (22 tests passing)
+[x] M5: Docker/Documentation - Dockerfile, docker-compose, README
+
+Decisions
+---------
+- Using FastMCP (decorator-based API) for simpler tool definitions
+- stdio transport for MCP (standard for local tools)
+- Temporal client is lazy-initialized on first tool call
+- History events formatted as human-readable text for LLM consumption
+- Python 3.11+ (compatible with latest stable)
