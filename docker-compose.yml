@@ -1,6 +1,5 @@
 services:
   # MCP server - connects to an external Temporal server
-  # For local development, run Temporal separately or use docker-compose.local.yml
   temporal-mcp:
     build: .
     environment:
