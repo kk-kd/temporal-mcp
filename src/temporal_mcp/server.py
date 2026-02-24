@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
-import sys
+import logging
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
+
+logger = logging.getLogger(__name__)
 from temporalio.client import WorkflowExecutionStatus
 
 from temporal_mcp.client import TemporalClientManager
@@ -374,7 +376,8 @@ async def get_workflow_history(
 
 def main() -> None:
     """Run the MCP server."""
-    print("Starting Temporal MCP server...", file=sys.stderr)
+    logging.basicConfig(level=logging.INFO)
+    logger.info("Starting Temporal MCP server...")
     mcp.run()
 
 
