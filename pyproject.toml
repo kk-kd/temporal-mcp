@@ -9,6 +9,7 @@ dependencies = [
     "temporalio>=1.7.0",
     "pydantic>=2.0.0",
     "pydantic-settings>=2.0.0",
+    "fastmcp<3",
 ]
 
 [project.optional-dependencies]
