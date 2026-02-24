@@ -9,7 +9,4 @@ COPY src/ ./src/
 
 RUN uv pip install --system .
 
-ENV TEMPORAL_ADDRESS=localhost:7233
-ENV TEMPORAL_NAMESPACE=default
-
 ENTRYPOINT ["temporal-mcp"]
