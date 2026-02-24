@@ -1,33 +1,16 @@
 services:
-  temporal:
-    image: temporalio/auto-setup:latest
-    ports:
-      - "7233:7233"
-    environment:
-      - DB=sqlite
-      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
-    volumes:
-      - temporal-data:/var/lib/temporal
-
-  temporal-ui:
-    image: temporalio/ui:latest
-    ports:
-      - "8080:8080"
-    environment:
-      - TEMPORAL_ADDRESS=temporal:7233
-      - TEMPORAL_CORS_ORIGINS=http://localhost:3000
-    depends_on:
-      - temporal
-
+  # MCP server - connects to an external Temporal server
   temporal-mcp:
     build: .
     environment:
-      - TEMPORAL_ADDRESS=temporal:7233
-      - TEMPORAL_NAMESPACE=default
-    depends_on:
-      - temporal
+      - TEMPORAL_ADDRESS=${TEMPORAL_ADDRESS:-host.docker.internal:7233}
+      - TEMPORAL_NAMESPACE=${TEMPORAL_NAMESPACE:-default}
+      # For Temporal Cloud with mTLS, uncomment and set:
+      # - TEMPORAL_TLS_CERT=/certs/client.pem
+      # - TEMPORAL_TLS_KEY=/certs/client.key
+      # Or use API key authentication:
+      # - TEMPORAL_API_KEY=${TEMPORAL_API_KEY}
+    # volumes:
+    #   - ./certs:/certs:ro  # Mount certificates for Temporal Cloud
     stdin_open: true
     tty: true
-
-volumes:
-  temporal-data:
